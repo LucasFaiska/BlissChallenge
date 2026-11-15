@@ -1,13 +1,11 @@
-import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
-extensions.configure<LibraryExtension> {
+android {
     namespace = "com.lucasoliveira.bliss.presentation"
     compileSdk = 36
 
