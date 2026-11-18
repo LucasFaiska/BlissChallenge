@@ -2,7 +2,6 @@ package com.lucasoliveira.bliss.data.local
 
 import com.lucasoliveira.bliss.data.local.entity.AvatarEntity
 import com.lucasoliveira.bliss.data.local.entity.EmojiEntity
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal interface LocalDataSource {
@@ -17,7 +16,7 @@ internal interface LocalDataSource {
 
     suspend fun getAvatarByLogin(login: String): AvatarEntity?
 
-    fun observeAvatars(): Flow<List<AvatarEntity>>
+    suspend fun getAvatars(): List<AvatarEntity>
 
     suspend fun deleteAvatarByLogin(login: String)
 }
@@ -41,8 +40,8 @@ internal class LocalDataSourceImpl @Inject constructor(
     override suspend fun getAvatarByLogin(login: String): AvatarEntity? =
         database.avatarDao().getByLogin(login)
 
-    override fun observeAvatars(): Flow<List<AvatarEntity>> =
-        database.avatarDao().observeAll()
+    override suspend fun getAvatars(): List<AvatarEntity> =
+        database.avatarDao().getAll()
 
     override suspend fun deleteAvatarByLogin(login: String) =
         database.avatarDao().deleteByLogin(login)

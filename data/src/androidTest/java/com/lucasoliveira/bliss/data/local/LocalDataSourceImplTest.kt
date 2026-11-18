@@ -3,7 +3,6 @@ package com.lucasoliveira.bliss.data.local
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.lucasoliveira.bliss.data.local.entity.AvatarEntity
 import com.lucasoliveira.bliss.data.local.entity.EmojiEntity
 import kotlinx.coroutines.test.runTest
@@ -98,17 +97,14 @@ class LocalDataSourceImplTest {
     }
 
     @Test
-    fun given_observer_when_avatar_is_inserted_and_deleted_then_observeAvatars_emits_each_change() = runTest {
-        localDataSource.observeAvatars().test {
-            assertEquals(emptyList<AvatarEntity>(), awaitItem())
+    fun given_avatars_when_getAvatars_then_returns_all_of_them() = runTest {
+        localDataSource.insertAvatar(blissAvatar)
 
-            localDataSource.insertAvatar(blissAvatar)
-            assertEquals(listOf(blissAvatar), awaitItem())
+        assertEquals(listOf(blissAvatar), localDataSource.getAvatars())
+    }
 
-            localDataSource.deleteAvatarByLogin("blissapps")
-            assertEquals(emptyList<AvatarEntity>(), awaitItem())
-
-            cancelAndIgnoreRemainingEvents()
-        }
+    @Test
+    fun given_no_avatars_when_getAvatars_then_returns_empty_list() = runTest {
+        assertEquals(emptyList<AvatarEntity>(), localDataSource.getAvatars())
     }
 }

@@ -3,7 +3,6 @@ package com.lucasoliveira.bliss.data.local.dao
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.lucasoliveira.bliss.data.local.BlissDatabase
 import com.lucasoliveira.bliss.data.local.entity.AvatarEntity
 import kotlinx.coroutines.test.runTest
@@ -69,26 +68,20 @@ class AvatarDaoTest {
     }
 
     @Test
-    fun given_observer_when_avatars_are_inserted_and_deleted_then_emits_each_change() = runTest {
+    fun given_avatars_when_getAll_then_returns_them_ordered_by_login() = runTest {
         val googleAvatar = AvatarEntity(
             login = "google",
             id = 1342004L,
             avatarUrl = "https://avatars.githubusercontent.com/u/1342004"
         )
+        avatarDao.insert(googleAvatar)
+        avatarDao.insert(blissAvatar)
 
-        avatarDao.observeAll().test {
-            assertEquals(emptyList<AvatarEntity>(), awaitItem())
+        assertEquals(listOf(blissAvatar, googleAvatar), avatarDao.getAll())
+    }
 
-            avatarDao.insert(googleAvatar)
-            assertEquals(listOf(googleAvatar), awaitItem())
-
-            avatarDao.insert(blissAvatar)
-            assertEquals(listOf(blissAvatar, googleAvatar), awaitItem())
-
-            avatarDao.deleteByLogin("google")
-            assertEquals(listOf(blissAvatar), awaitItem())
-
-            cancelAndIgnoreRemainingEvents()
-        }
+    @Test
+    fun given_no_avatars_when_getAll_then_returns_empty_list() = runTest {
+        assertEquals(emptyList<AvatarEntity>(), avatarDao.getAll())
     }
 }
