@@ -2,12 +2,14 @@ package com.lucasoliveira.bliss.presentation.emojilist
 
 import com.lucasoliveira.bliss.domain.model.Emoji
 
-data class EmojiListState(
-    val emojis: List<Emoji> = emptyList(),
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val errorMessage: String? = null,
-)
+sealed interface EmojiListUiState {
+    data object Loading : EmojiListUiState
+    data class Success(
+        val emojis: List<Emoji>,
+        val isRefreshing: Boolean = false,
+    ) : EmojiListUiState
+    data class Error(val message: String?) : EmojiListUiState
+}
 
 sealed interface EmojiListIntent {
     data object LoadEmojis : EmojiListIntent

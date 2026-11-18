@@ -1,20 +1,17 @@
 package com.lucasoliveira.bliss.presentation.home
 
-data class HomeState(
-    val imageUrl: String? = null,
-    val query: String = "",
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-)
+sealed interface HomeUiState {
+    data object Idle : HomeUiState
+    data object Loading : HomeUiState
+    data class Success(val imageUrl: String) : HomeUiState
+}
 
 sealed interface HomeIntent {
     data object RandomEmojiClicked : HomeIntent
-    data class QueryChanged(val query: String) : HomeIntent
-    data object SearchClicked : HomeIntent
+    data class SearchClicked(val query: String) : HomeIntent
     data object EmojiListClicked : HomeIntent
     data object AvatarListClicked : HomeIntent
     data object GoogleReposClicked : HomeIntent
-    data object ErrorDismissed : HomeIntent
 }
 
 sealed interface HomeSideEffect {
