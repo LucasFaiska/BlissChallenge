@@ -13,6 +13,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -55,4 +56,6 @@ dependencies {
     testImplementation(libs.bundles.unit.test)
     testImplementation(libs.mockwebserver)
     testImplementation(libs.androidx.paging.testing)
+
+    androidTestImplementation(libs.bundles.android.test)
 }
