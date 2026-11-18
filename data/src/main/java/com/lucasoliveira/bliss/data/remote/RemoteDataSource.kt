@@ -1,0 +1,24 @@
+package com.lucasoliveira.bliss.data.remote
+
+import com.lucasoliveira.bliss.data.remote.api.GithubApiService
+import com.lucasoliveira.bliss.data.remote.dto.UserResponseDto
+import com.lucasoliveira.bliss.data.remote.network.GithubApiResponse
+import javax.inject.Inject
+
+internal interface RemoteDataSource {
+
+    suspend fun getEmojis(): GithubApiResponse<Map<String, String>>
+
+    suspend fun getUser(username: String): GithubApiResponse<UserResponseDto>
+}
+
+internal class RemoteDataSourceImpl @Inject constructor(
+    private val apiService: GithubApiService
+) : RemoteDataSource {
+
+    override suspend fun getEmojis(): GithubApiResponse<Map<String, String>> =
+        apiService.getEmojis()
+
+    override suspend fun getUser(username: String): GithubApiResponse<UserResponseDto> =
+        apiService.getUser(username)
+}

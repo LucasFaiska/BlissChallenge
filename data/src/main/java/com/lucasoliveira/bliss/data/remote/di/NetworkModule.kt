@@ -1,5 +1,6 @@
 package com.lucasoliveira.bliss.data.remote.di
 
+import com.lucasoliveira.bliss.data.remote.api.GithubApiService
 import com.lucasoliveira.bliss.data.remote.network.GithubApiNetworkAdapterFactory
 import com.lucasoliveira.bliss.data.remote.network.GithubHeaderInterceptor
 import dagger.Module
@@ -60,4 +61,9 @@ internal object NetworkModule {
         .addConverterFactory(json.asConverterFactory(CONTENT_TYPE.toMediaType()))
         .addCallAdapterFactory(GithubApiNetworkAdapterFactory())
         .build()
+
+    @Provides
+    @Singleton
+    fun provideGithubApiService(retrofit: Retrofit): GithubApiService =
+        retrofit.create(GithubApiService::class.java)
 }
