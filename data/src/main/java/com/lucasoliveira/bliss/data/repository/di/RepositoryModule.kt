@@ -14,17 +14,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface RepositoryModule {
+abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindEmojiRepository(emojiRepositoryImpl: EmojiRepositoryImpl): EmojiRepository
+    internal abstract fun bindEmojiRepository(emojiRepositoryImpl: EmojiRepositoryImpl): EmojiRepository
 
     @Binds
     @Singleton
-    fun bindAvatarRepository(avatarRepositoryImpl: AvatarRepositoryImpl): AvatarRepository
+    internal abstract fun bindAvatarRepository(avatarRepositoryImpl: AvatarRepositoryImpl): AvatarRepository
 
     @Binds
     @Singleton
-    fun bindRepoRepository(repoRepositoryImpl: RepoRepositoryImpl): RepoRepository
+    internal abstract fun bindRepoRepository(repoRepositoryImpl: RepoRepositoryImpl): RepoRepository
 }
