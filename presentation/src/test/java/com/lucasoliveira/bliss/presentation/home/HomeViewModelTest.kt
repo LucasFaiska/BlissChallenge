@@ -92,14 +92,14 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given emoji shown, when RandomEmojiClicked fails, then keep the previous emoji`() {
+    fun `given emoji shown, when RandomEmojiClicked fails, then clear the image back to Idle`() {
         every { getEmojisUseCase() } returns flowOf(listOf(thumbsUp))
         viewModel.onIntent(HomeIntent.RandomEmojiClicked)
         every { getEmojisUseCase() } returns flow { throw DomainException("No internet connection") }
 
         viewModel.onIntent(HomeIntent.RandomEmojiClicked)
 
-        assertEquals(HomeUiState.Success(thumbsUp.url), viewModel.uiState.value)
+        assertEquals(HomeUiState.Idle, viewModel.uiState.value)
     }
 
     @Test
@@ -143,14 +143,14 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `given emoji shown, when SearchClicked fails, then keep the previous emoji`() {
-        every { getEmojisUseCase() } returns flowOf(listOf(thumbsUp))
-        viewModel.onIntent(HomeIntent.RandomEmojiClicked)
+    fun `given avatar shown, when SearchClicked fails, then clear the image back to Idle`() {
+        every { getAvatarUseCase("blissapps") } returns flowOf(blissAvatar)
+        viewModel.onIntent(HomeIntent.SearchClicked("blissapps"))
         every { getAvatarUseCase("unknown-user") } returns flow { throw DomainException("User unknown-user not found") }
 
         viewModel.onIntent(HomeIntent.SearchClicked("unknown-user"))
 
-        assertEquals(HomeUiState.Success(thumbsUp.url), viewModel.uiState.value)
+        assertEquals(HomeUiState.Idle, viewModel.uiState.value)
     }
 
     @Test

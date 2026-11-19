@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -158,5 +159,20 @@ class BlissComponentsTest {
         composeRule.onNodeWithText("RETRY").performClick()
 
         assertTrue(retried)
+    }
+
+    @Test
+    fun `given image that fails to load, when shown, then show broken image keeping the description`() {
+        composeRule.setContent {
+            BlissTheme {
+                BlissImage(url = "https://images/unreachable.png", contentDescription = "+1")
+            }
+        }
+
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithTag(BROKEN_IMAGE_TEST_TAG).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithTag(BROKEN_IMAGE_TEST_TAG).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("+1").assertIsDisplayed()
     }
 }

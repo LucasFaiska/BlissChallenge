@@ -18,10 +18,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -101,11 +103,18 @@ private fun HomeImage(uiState: HomeUiState) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(ImageSize)) {
         when (uiState) {
             HomeUiState.Loading -> BlissLoading()
-            is HomeUiState.Success -> BlissImage(
-                url = uiState.imageUrl,
-                contentDescription = stringResource(R.string.home_image_description),
-                modifier = Modifier.size(ImageSize),
-            )
+            is HomeUiState.Success -> {
+                var isImageLoading by remember(uiState.imageUrl) { mutableStateOf(true) }
+                BlissImage(
+                    url = uiState.imageUrl,
+                    contentDescription = stringResource(R.string.home_image_description),
+                    onLoadingChange = { isImageLoading = it },
+                    modifier = Modifier.size(ImageSize),
+                )
+                if (isImageLoading && !LocalInspectionMode.current) {
+                    BlissLoading()
+                }
+            }
             HomeUiState.Idle -> Icon(
                 imageVector = Icons.Filled.Lightbulb,
                 contentDescription = stringResource(R.string.home_default_image_description),

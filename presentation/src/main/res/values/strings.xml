@@ -11,4 +11,5 @@
     <string name="error_title">Oops!</string>
     <string name="error_generic">Something went wrong</string>
     <string name="avatar_list_empty">No avatars yet. Search for a GitHub user on the home screen.</string>
+    <string name="image_load_error">Image could not be loaded</string>
 </resources>

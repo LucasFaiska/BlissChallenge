@@ -41,15 +41,14 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun showRandomEmoji() {
-        val previousState = _uiState.value
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
             getEmojisUseCase()
-                .catch { error -> showError(previousState, error) }
+                .catch { error -> showError(error) }
                 .collect { emojis ->
                     _uiState.value = emojis.randomOrNull()
                         ?.let { HomeUiState.Success(it.url) }
-                        ?: previousState
+                        ?: HomeUiState.Idle
                 }
         }
     }
@@ -58,17 +57,16 @@ class HomeViewModel @Inject constructor(
         val login = query.trim()
         if (login.isEmpty()) return
 
-        val previousState = _uiState.value
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
             getAvatarUseCase(login)
-                .catch { error -> showError(previousState, error) }
+                .catch { error -> showError(error) }
                 .collect { avatar -> _uiState.value = HomeUiState.Success(avatar.avatarUrl) }
         }
     }
 
-    private suspend fun showError(previousState: HomeUiState, error: Throwable) {
-        _uiState.value = previousState
+    private suspend fun showError(error: Throwable) {
+        _uiState.value = HomeUiState.Idle
         snackbarController.show(SnackbarMessage(error.message))
     }
 
