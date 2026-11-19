@@ -11,3 +11,6 @@ data object EmojiListRoute : NavKey
 
 @Serializable
 data object AvatarListRoute : NavKey
+
+@Serializable
+data object GoogleReposRoute : NavKey

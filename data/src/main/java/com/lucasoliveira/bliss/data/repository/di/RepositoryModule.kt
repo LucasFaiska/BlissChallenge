@@ -2,8 +2,10 @@ package com.lucasoliveira.bliss.data.repository.di
 
 import com.lucasoliveira.bliss.data.repository.AvatarRepositoryImpl
 import com.lucasoliveira.bliss.data.repository.EmojiRepositoryImpl
+import com.lucasoliveira.bliss.data.repository.RepoRepositoryImpl
 import com.lucasoliveira.bliss.domain.repository.AvatarRepository
 import com.lucasoliveira.bliss.domain.repository.EmojiRepository
+import com.lucasoliveira.bliss.domain.repository.RepoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +23,8 @@ internal interface RepositoryModule {
     @Binds
     @Singleton
     fun bindAvatarRepository(avatarRepositoryImpl: AvatarRepositoryImpl): AvatarRepository
+
+    @Binds
+    @Singleton
+    fun bindRepoRepository(repoRepositoryImpl: RepoRepositoryImpl): RepoRepository
 }

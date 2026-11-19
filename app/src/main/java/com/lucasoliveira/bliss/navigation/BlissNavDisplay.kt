@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.lucasoliveira.bliss.presentation.avatarlist.AvatarListRoot
 import com.lucasoliveira.bliss.presentation.emojilist.EmojiListRoot
+import com.lucasoliveira.bliss.presentation.googlerepos.GoogleReposRoot
 import com.lucasoliveira.bliss.presentation.home.HomeRoot
 
 @Composable
@@ -27,11 +28,12 @@ fun BlissNavDisplay(modifier: Modifier = Modifier) {
                 HomeRoot(
                     onNavigateToEmojiList = { backStack.add(EmojiListRoute) },
                     onNavigateToAvatarList = { backStack.add(AvatarListRoute) },
-                    onNavigateToGoogleRepos = {},
+                    onNavigateToGoogleRepos = { backStack.add(GoogleReposRoute) },
                 )
             }
             entry<EmojiListRoute> { EmojiListRoot() }
             entry<AvatarListRoute> { AvatarListRoot() }
+            entry<GoogleReposRoute> { GoogleReposRoot() }
         },
         modifier = modifier,
     )
