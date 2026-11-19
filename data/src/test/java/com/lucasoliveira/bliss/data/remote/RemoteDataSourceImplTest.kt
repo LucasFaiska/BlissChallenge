@@ -1,6 +1,7 @@
 package com.lucasoliveira.bliss.data.remote
 
 import com.lucasoliveira.bliss.data.remote.api.GithubApiService
+import com.lucasoliveira.bliss.data.remote.dto.RepoResponseDto
 import com.lucasoliveira.bliss.data.remote.dto.UserResponseDto
 import com.lucasoliveira.bliss.data.remote.network.GithubApiResponse
 import com.lucasoliveira.bliss.data.remote.network.HttpCallException
@@ -50,5 +51,23 @@ class RemoteDataSourceImplTest {
         coEvery { apiService.getUser("unknown-user") } returns expected
 
         assertEquals(expected, remoteDataSource.getUser("unknown-user"))
+    }
+
+    @Test
+    fun `given api success, when getUserRepos is called, then return Success from api`() = runTest {
+        val repos = listOf(RepoResponseDto(id = 170908616L, fullName = "google/.github", isPrivate = false))
+        val expected = GithubApiResponse.Success(repos)
+        coEvery { apiService.getUserRepos("google", 1, 30) } returns expected
+
+        assertEquals(expected, remoteDataSource.getUserRepos("google", page = 1, perPage = 30))
+        coVerify(exactly = 1) { apiService.getUserRepos("google", 1, 30) }
+    }
+
+    @Test
+    fun `given api error, when getUserRepos is called, then return Error from api`() = runTest {
+        val expected = GithubApiResponse.Error(RateLimitException(resetAtUnixSeconds = 1672531200L))
+        coEvery { apiService.getUserRepos("google", 2, 30) } returns expected
+
+        assertEquals(expected, remoteDataSource.getUserRepos("google", page = 2, perPage = 30))
     }
 }

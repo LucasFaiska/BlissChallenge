@@ -1,5 +1,6 @@
 package com.lucasoliveira.bliss.data.remote.api
 
+import com.lucasoliveira.bliss.data.remote.dto.RepoResponseDto
 import com.lucasoliveira.bliss.data.remote.dto.UserResponseDto
 import com.lucasoliveira.bliss.data.remote.network.GithubApiNetworkAdapterFactory
 import com.lucasoliveira.bliss.data.remote.network.GithubApiResponse
@@ -182,6 +183,56 @@ class GithubApiServiceTest {
         val response = apiService.getEmojis()
 
         assertTrue((response as GithubApiResponse.Error).error is NoConnectivityException)
+    }
+
+    @Test
+    fun `given real github repos payload, when getUserRepos is called, then return Success with repos`() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(readJsonFile("repos_success.json")))
+
+        val response = apiService.getUserRepos("google", page = 1, perPage = 2)
+
+        val expected = listOf(
+            RepoResponseDto(id = 460600860L, fullName = "google/.allstar", isPrivate = false),
+            RepoResponseDto(id = 170908616L, fullName = "google/.github", isPrivate = false),
+        )
+        assertEquals(expected, (response as GithubApiResponse.Success).body)
+    }
+
+    @Test
+    fun `when getUserRepos is called, then send GET to user repos path with page and per page`() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("[]"))
+
+        apiService.getUserRepos("google", page = 3, perPage = 30)
+
+        val request = mockWebServer.takeRequest()
+        assertEquals("GET", request.method)
+        assertEquals("/users/google/repos?page=3&per_page=30", request.path)
+        assertEquals(GithubHttpHeader.USER_AGENT_VALUE, request.getHeader(GithubHttpHeader.USER_AGENT_HEADER))
+        assertEquals(GithubHttpHeader.ACCEPT_VALUE, request.getHeader(GithubHttpHeader.ACCEPT_HEADER))
+    }
+
+    @Test
+    fun `given page after the last one, when getUserRepos is called, then return Success with empty list`() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("[]"))
+
+        val response = apiService.getUserRepos("google", page = 999, perPage = 30)
+
+        assertEquals(emptyList<RepoResponseDto>(), (response as GithubApiResponse.Success).body)
+    }
+
+    @Test
+    fun `given rate limit exceeded, when getUserRepos is called, then return RateLimitException`() = runBlocking {
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(403)
+                .addHeader(GithubHttpHeader.RATE_LIMIT_REMAINING_HEADER, "0")
+                .addHeader(GithubHttpHeader.RATE_LIMIT_RESET_HEADER, "1672531200")
+        )
+
+        val response = apiService.getUserRepos("google", page = 1, perPage = 30)
+
+        val error = (response as GithubApiResponse.Error).error
+        assertEquals(1672531200L, (error as RateLimitException).resetAtUnixSeconds)
     }
 
     private fun readJsonFile(fileName: String): String =
